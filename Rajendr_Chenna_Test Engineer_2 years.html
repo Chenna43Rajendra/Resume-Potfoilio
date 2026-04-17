@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rajendra Chenna — QA Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #070a0f;
+    --surface: #0d1117;
+    --surface2: #131a24;
+    --border: rgba(0,255,140,0.12);
+    --green: #00ff8c;
+    --green-dim: #00c96a;
+    --cyan: #00e5ff;
+    --text: #e8f0f8;
+    --muted: #7a8fa6;
+    --accent: #ff5e5e;
+    --card: #0f1620;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+ 
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+    cursor: none;
+  }
+ 
+  /* CURSOR */
+  .cursor {
+    position: fixed;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--green);
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s, opacity 0.2s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: 1.5px solid var(--green);
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: transform 0.18s ease, width 0.2s, height 0.2s, opacity 0.2s;
+    opacity: 0.5;
+  }
+ 
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.35;
+  }
+ 
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 3rem;
+    background: rgba(7,10,15,0.82);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--green);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--green); }
+ 
+  /* SECTIONS */
+  section { padding: 7rem 0; }
+ 
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2.5rem;
+  }
+ 
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+  }
+  .hero-grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,140,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,140,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridPulse 8s ease-in-out infinite;
+  }
+  @keyframes gridPulse {
+    0%,100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+  .hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,255,140,0.08) 0%, transparent 70%);
+    top: 50%; left: 55%;
+    transform: translate(-50%,-50%);
+    animation: glowPulse 4s ease-in-out infinite;
+  }
+  @keyframes glowPulse {
+    0%,100% { transform: translate(-50%,-50%) scale(1); }
+    50% { transform: translate(-50%,-50%) scale(1.12); }
+  }
+ 
+  .hero-content { position: relative; z-index: 2; }
+  .hero-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--green);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.2s forwards;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 2.5rem; height: 1px;
+    background: var(--green);
+  }
+  .hero-name {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.35s forwards;
+  }
+  .hero-name span { color: var(--green); }
+  .hero-role {
+    font-family: 'Space Mono', monospace;
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.5s forwards;
+  }
+  .hero-role .blink {
+    color: var(--green);
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+ 
+  .hero-summary {
+    max-width: 540px;
+    color: var(--muted);
+    font-size: 1rem;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.65s forwards;
+  }
+  .hero-summary strong { color: var(--text); }
+ 
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.8s forwards;
+  }
+  .btn-primary {
+    background: var(--green);
+    color: #000;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.9rem 2rem;
+    border: none;
+    text-decoration: none;
+    display: inline-block;
+    transition: transform 0.2s, box-shadow 0.2s;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,255,140,0.3);
+  }
+  .btn-outline {
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.9rem 2rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--green); color: var(--green); }
+ 
+  .hero-stats {
+    position: absolute;
+    right: 0; bottom: 3rem;
+    display: flex;
+    gap: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 1s forwards;
+  }
+  .stat-item { text-align: right; }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--green);
+    line-height: 1;
+  }
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+ 
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+ 
+  /* ── SECTION HEADER ── */
+  .section-header { margin-bottom: 4rem; }
+  .section-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--green);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .section-tag::after {
+    content: '';
+    flex: 1;
+    max-width: 80px;
+    height: 1px;
+    background: var(--green);
+    opacity: 0.5;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .section-title span { color: var(--green); }
+ 
+  /* ── SKILLS ── */
+  #skills { background: var(--surface); }
+  .skills-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  .skill-group {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    position: relative;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .skill-group:hover { border-color: var(--green); transform: translateY(-4px); }
+  .skill-group::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--green);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .skill-group:hover::before { opacity: 1; }
+  .skill-group-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .skill-icon { font-size: 1rem; }
+  .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    border: 1px solid rgba(122,143,166,0.25);
+    padding: 0.3rem 0.8rem;
+    letter-spacing: 0.05em;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .tag:hover { color: var(--green); border-color: var(--green); }
+  .tag.highlight { color: var(--text); border-color: rgba(0,255,140,0.3); }
+ 
+  /* BARS */
+  .skill-bars { display: flex; flex-direction: column; gap: 1rem; }
+  .bar-item { }
+  .bar-header { display: flex; justify-content: space-between; margin-bottom: 0.4rem; }
+  .bar-name { font-size: 0.85rem; color: var(--text); }
+  .bar-pct { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--green); }
+  .bar-track {
+    height: 3px;
+    background: rgba(255,255,255,0.06);
+    position: relative;
+    overflow: hidden;
+  }
+  .bar-fill {
+    position: absolute;
+    top: 0; left: 0; height: 100%;
+    background: linear-gradient(90deg, var(--green-dim), var(--green));
+    width: 0;
+    transition: width 1.2s cubic-bezier(0.25,1,0.5,1);
+  }
+ 
+  /* ── EXPERIENCE ── */
+  #experience { }
+  .exp-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .exp-card:hover { border-color: rgba(0,255,140,0.4); }
+  .exp-card::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle at top right, rgba(0,255,140,0.06), transparent 70%);
+  }
+  .exp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .exp-company {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .exp-role {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--green);
+    margin-top: 0.2rem;
+    letter-spacing: 0.05em;
+  }
+  .exp-period {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    background: rgba(0,255,140,0.06);
+    border: 1px solid var(--border);
+    padding: 0.4rem 1rem;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+  .exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+  .exp-bullets li {
+    display: flex;
+    gap: 0.8rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  .exp-bullets li::before {
+    content: '▸';
+    color: var(--green);
+    flex-shrink: 0;
+    margin-top: 0.12rem;
+  }
+  .exp-bullets li strong { color: var(--text); }
+ 
+  /* ── PROJECTS ── */
+  #projects { background: var(--surface); }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  .project-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    position: relative;
+    transition: border-color 0.3s, transform 0.3s;
+    overflow: hidden;
+  }
+  .project-card:hover { border-color: var(--green); transform: translateY(-6px); }
+  .project-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--green), var(--cyan));
+    transform: scaleX(0);
+    transition: transform 0.4s;
+    transform-origin: left;
+  }
+  .project-card:hover::before { transform: scaleX(1); }
+  .project-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: rgba(0,255,140,0.06);
+    position: absolute;
+    top: 0.5rem; right: 1rem;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+  .project-domain {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--green);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .project-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+  }
+  .project-desc {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 1.2rem;
+    line-height: 1.6;
+  }
+  .project-period {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    border-top: 1px solid var(--border);
+    padding-top: 0.8rem;
+    margin-top: auto;
+  }
+  .project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+  .project-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    padding: 0.2rem 0.6rem;
+    background: rgba(0,255,140,0.06);
+    border: 1px solid rgba(0,255,140,0.2);
+    color: var(--green);
+    letter-spacing: 0.05em;
+  }
+ 
+  /* ACHIEVEMENT BADGES */
+  .achievements {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 4rem;
+  }
+  .badge {
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    text-align: center;
+    background: var(--card);
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .badge:hover { border-color: var(--green); transform: translateY(-4px); }
+  .badge-icon { font-size: 2rem; margin-bottom: 0.75rem; display: block; }
+  .badge-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--green);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .badge-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+ 
+  /* ── EDUCATION & CERTS ── */
+  #education { }
+  .edu-certs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+  .edu-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.8rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.3s;
+    position: relative;
+  }
+  .edu-card:hover { border-color: rgba(0,255,140,0.4); }
+  .edu-degree {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+  }
+  .edu-school {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .edu-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+  }
+  .edu-year { color: var(--muted); }
+  .edu-gpa {
+    background: rgba(0,255,140,0.08);
+    border: 1px solid rgba(0,255,140,0.25);
+    color: var(--green);
+    padding: 0.2rem 0.6rem;
+    letter-spacing: 0.08em;
+  }
+  .cert-card {
+    border: 1px solid var(--border);
+    padding: 1.4rem 1.8rem;
+    margin-bottom: 0.8rem;
+    background: var(--card);
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .cert-card:hover { border-color: var(--green); transform: translateX(6px); }
+  .cert-icon { color: var(--green); font-size: 1.3rem; flex-shrink: 0; margin-top: 0.1rem; }
+  .cert-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.2rem;
+  }
+  .cert-year {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+ 
+  /* ── CONTACT ── */
+  #contact { background: var(--surface); }
+  .contact-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .contact-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+  .contact-title span { color: var(--green); }
+  .contact-sub { color: var(--muted); margin-bottom: 2rem; }
+  .contact-links { display: flex; flex-direction: column; gap: 0.8rem; }
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .contact-link:hover { color: var(--green); }
+  .contact-link-icon {
+    width: 36px; height: 36px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .contact-link:hover .contact-link-icon { border-color: var(--green); background: rgba(0,255,140,0.08); }
+ 
+  .contact-form-side {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+  }
+  .form-group { margin-bottom: 1.2rem; }
+  .form-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--green);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+  .form-input, .form-textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.8rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: none;
+  }
+  .form-input:focus, .form-textarea:focus { border-color: var(--green); }
+  .form-textarea { height: 110px; }
+  .form-submit {
+    width: 100%;
+    background: var(--green);
+    color: #000;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: none;
+    padding: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .form-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,255,140,0.25); }
+ 
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+  .footer-copy span { color: var(--green); }
+ 
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+ 
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .container { padding: 0 1.5rem; }
+    .skills-layout, .projects-grid, .edu-certs-grid, .contact-wrapper { grid-template-columns: 1fr; }
+    .achievements { grid-template-columns: 1fr 1fr; }
+    .hero-stats { position: static; margin-top: 2rem; justify-content: flex-start; }
+    section { padding: 5rem 0; }
+  }
+</style>
+</head>
+<body>
+ 
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+ 
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">RC // QA Engineer</div>
+  <ul class="nav-links">
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+ 
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="container" style="position:relative;z-index:2;width:100%;">
+    <div class="hero-content">
+      <div class="hero-tag">ISTQB CTFL 4.0 Certified</div>
+      <h1 class="hero-name">Rajendra<br/><span>Chenna</span></h1>
+      <div class="hero-role">QA Engineer — Manual &amp; API Testing<span class="blink">_</span></div>
+      <p class="hero-summary">
+        <strong>2+ years</strong> delivering zero critical defect escapes in enterprise <strong>Banking &amp; FinTech</strong> platforms. Expert in functional testing, REST API validation with Postman, SQL backend verification, and Agile Scrum.
+      </p>
+      <div class="hero-cta">
+        <a href="#contact" class="btn-primary">Hire Me</a>
+        <a href="#projects" class="btn-outline">View Work</a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">300+</div>
+        <div class="stat-label">Test Cases<br/>Executed</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">0</div>
+        <div class="stat-label">Critical Defect<br/>Escapes</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">95%+</div>
+        <div class="stat-label">Functional<br/>Coverage</div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- SKILLS -->
+<section id="skills">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">What I Bring</div>
+      <h2 class="section-title">Technical <span>Skills</span></h2>
+    </div>
+    <div class="skills-layout">
+      <div class="skill-group reveal">
+        <div class="skill-group-title"><span class="skill-icon">🧪</span> Testing Types</div>
+        <div class="tags">
+          <span class="tag highlight">Functional</span>
+          <span class="tag highlight">Regression</span>
+          <span class="tag highlight">Smoke</span>
+          <span class="tag highlight">Sanity</span>
+          <span class="tag">Integration</span>
+          <span class="tag">System</span>
+          <span class="tag">UAT</span>
+          <span class="tag">Database</span>
+          <span class="tag highlight">API Testing</span>
+          <span class="tag">Negative Testing</span>
+        </div>
+      </div>
+      <div class="skill-group reveal">
+        <div class="skill-group-title"><span class="skill-icon">🛠</span> Tools & Methods</div>
+        <div class="skill-bars">
+          <div class="bar-item">
+            <div class="bar-header"><span class="bar-name">Postman (REST API)</span><span class="bar-pct">90%</span></div>
+            <div class="bar-track"><div class="bar-fill" data-width="90"></div></div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-header"><span class="bar-name">JIRA / Agile Scrum</span><span class="bar-pct">92%</span></div>
+            <div class="bar-track"><div class="bar-fill" data-width="92"></div></div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-header"><span class="bar-name">SQL / DB Validation</span><span class="bar-pct">80%</span></div>
+            <div class="bar-track"><div class="bar-fill" data-width="80"></div></div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-header"><span class="bar-name">Test Case Design (BVA/EP)</span><span class="bar-pct">95%</span></div>
+            <div class="bar-track"><div class="bar-fill" data-width="95"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="skill-group reveal">
+        <div class="skill-group-title"><span class="skill-icon">🤖</span> Automation (Learning)</div>
+        <div class="tags">
+          <span class="tag highlight">Selenium WebDriver</span>
+          <span class="tag highlight">Core Java</span>
+          <span class="tag highlight">TestNG</span>
+          <span class="tag">Page Object Model</span>
+          <span class="tag">Maven</span>
+        </div>
+        <p style="margin-top:1rem;font-size:0.82rem;color:var(--muted);">
+          Actively transitioning into <strong style="color:var(--text)">SDET / Automation Engineer</strong> role. Pursuing Full Stack Testing with AI (2026).
+        </p>
+      </div>
+      <div class="skill-group reveal">
+        <div class="skill-group-title"><span class="skill-icon">🏦</span> Domain Expertise</div>
+        <div class="tags">
+          <span class="tag highlight">Banking & FinTech</span>
+          <span class="tag highlight">NEFT / RTGS / IMPS</span>
+          <span class="tag">Transaction Validation</span>
+          <span class="tag">Account Management</span>
+          <span class="tag">LOS / LMS</span>
+          <span class="tag">E-Banking</span>
+          <span class="tag">Fund Transfers</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">Where I've Worked</div>
+      <h2 class="section-title">Work <span>Experience</span></h2>
+    </div>
+    <div class="exp-card reveal">
+      <div class="exp-header">
+        <div>
+          <div class="exp-company">QualityKiosk Technologies Pvt. Ltd.</div>
+          <div class="exp-role">// Test Engineer — Bengaluru, India</div>
+        </div>
+        <div class="exp-period">Mar 2024 – Present · 2 Years</div>
+      </div>
+      <ul class="exp-bullets">
+        <li>Executed end-to-end <strong>manual testing</strong> for enterprise financial web applications across multiple production releases, ensuring <strong>zero critical defect escapes.</strong></li>
+        <li>Designed and executed <strong>300+ structured test cases</strong> covering functional, regression, integration, and negative scenarios mapped to business requirements.</li>
+        <li>Validated mission-critical banking workflows: <strong>Fund Transfers (NEFT/RTGS/IMPS)</strong>, Transaction History, Account Management, Bills &amp; Recharges, and Statement Generation.</li>
+        <li>Conducted <strong>REST API testing with Postman</strong> — validating payloads, HTTP status codes, and error handling; performed <strong>SQL backend validation</strong> to ensure UI-to-database data integrity.</li>
+        <li>Managed full <strong>defect lifecycle in JIRA</strong> and participated in all Agile ceremonies: Sprint Planning, Daily Stand-ups, Reviews, and Retrospectives.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+ 
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">What I've Tested</div>
+      <h2 class="section-title">Project <span>Work</span></h2>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card reveal">
+        <div class="project-num">01</div>
+        <div class="project-domain">Banking · Core Platform</div>
+        <div class="project-name">Saraswat Bank — Core Banking Web App</div>
+        <div class="project-tags">
+          <span class="project-tag">Manual Testing</span>
+          <span class="project-tag">JIRA</span>
+          <span class="project-tag">Postman</span>
+          <span class="project-tag">SQL</span>
+          <span class="project-tag">Regression</span>
+        </div>
+        <p class="project-desc">
+          Owned QA for 6 modules — Authentication, Account Management, Fund Transfers (NEFT/RTGS/IMPS), Transaction History, Bank Statements, and Bills &amp; Recharges — on a live production banking platform.
+        </p>
+        <ul class="exp-bullets" style="margin-bottom:1rem;">
+          <li>Designed <strong>150+ test cases</strong> using BVA &amp; Equivalence Partitioning; achieved <strong>95%+ functional test coverage.</strong></li>
+          <li><strong>Zero critical defect escapes</strong> across 5+ consecutive production releases.</li>
+          <li>Supported UAT and post-deployment validation, signing off on <strong>go-live readiness</strong> each sprint.</li>
+        </ul>
+        <div class="project-period">Nov 2024 – Present</div>
+      </div>
+      <div class="project-card reveal">
+        <div class="project-num">02</div>
+        <div class="project-domain">E-Commerce · Travel Tech</div>
+        <div class="project-name">Adactin — Hotel Booking Web Application</div>
+        <div class="project-tags">
+          <span class="project-tag">Manual Testing</span>
+          <span class="project-tag">Postman</span>
+          <span class="project-tag">Regression</span>
+          <span class="project-tag">E2E Testing</span>
+        </div>
+        <p class="project-desc">
+          Designed end-to-end test scenarios for hotel search, booking, payment processing, and cancellations. Conducted REST API testing via Postman and executed regression suites across multiple builds.
+        </p>
+        <ul class="exp-bullets" style="margin-bottom:1rem;">
+          <li>Covered full booking lifecycle — search → payment → <strong>cancellation flows.</strong></li>
+          <li>Validated API response payloads, status codes, and error handling.</li>
+          <li>Executed multi-build regression testing ensuring release stability.</li>
+        </ul>
+        <div class="project-period">Jul 2024 – Oct 2024</div>
+      </div>
+    </div>
+ 
+    <!-- Achievement Badges -->
+    <div class="achievements">
+      <div class="badge reveal">
+        <span class="badge-icon">🎯</span>
+        <div class="badge-value">300+</div>
+        <div class="badge-label">Test Cases Executed</div>
+      </div>
+      <div class="badge reveal">
+        <span class="badge-icon">🛡️</span>
+        <div class="badge-value">0</div>
+        <div class="badge-label">Critical Defect Escapes</div>
+      </div>
+      <div class="badge reveal">
+        <span class="badge-icon">✅</span>
+        <div class="badge-value">95%+</div>
+        <div class="badge-label">Test Coverage Achieved</div>
+      </div>
+      <div class="badge reveal">
+        <span class="badge-icon">🚀</span>
+        <div class="badge-value">5+</div>
+        <div class="badge-label">Production Releases</div>
+      </div>
+      <div class="badge reveal">
+        <span class="badge-icon">🏦</span>
+        <div class="badge-value">6</div>
+        <div class="badge-label">Banking Modules Owned</div>
+      </div>
+      <div class="badge reveal">
+        <span class="badge-icon">📋</span>
+        <div class="badge-value">150+</div>
+        <div class="badge-label">Test Cases (Saraswat)</div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- EDUCATION & CERTS -->
+<section id="education">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">Credentials</div>
+      <h2 class="section-title">Education &amp; <span>Certifications</span></h2>
+    </div>
+    <div class="edu-certs-grid">
+      <div class="reveal">
+        <h3 style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1.2rem;">Education</h3>
+        <div class="edu-card">
+          <div class="edu-degree">Master of Computer Applications (MCA)</div>
+          <div class="edu-school">Rajeev Gandhi Memorial College of Engineering &amp; Technology, Nandyal</div>
+          <div class="edu-meta">
+            <span class="edu-year">2022 – 2024</span>
+            <span class="edu-gpa">CGPA 8.7/10</span>
+          </div>
+        </div>
+        <div class="edu-card">
+          <div class="edu-degree">B.Sc. — Mathematics, Physics &amp; Computer Science</div>
+          <div class="edu-school">K.G.R Degree College, Banaganapalli</div>
+          <div class="edu-meta">
+            <span class="edu-year">2019 – 2022</span>
+            <span class="edu-gpa">CGPA 8.0/10</span>
+          </div>
+        </div>
+      </div>
+      <div class="reveal">
+        <h3 style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1.2rem;">Certifications</h3>
+        <div class="cert-card">
+          <span class="cert-icon">🏅</span>
+          <div>
+            <div class="cert-name">ISTQB CTFL 4.0 — Foundation Level</div>
+            <div class="cert-year">Issued 2025 · International Software Testing Qualifications Board</div>
+          </div>
+        </div>
+        <div class="cert-card">
+          <span class="cert-icon">⚡</span>
+          <div>
+            <div class="cert-name">Full Stack Testing with AI 2026</div>
+            <div class="cert-year">Currently Pursuing · 2026</div>
+          </div>
+        </div>
+        <div class="cert-card">
+          <span class="cert-icon">📘</span>
+          <div>
+            <div class="cert-name">Software Testing Bootcamp</div>
+            <div class="cert-year">Udemy · 2025</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-wrapper">
+      <div class="reveal">
+        <div class="section-tag">Let's Connect</div>
+        <h2 class="contact-title">Open to <span>New Opportunities</span></h2>
+        <p class="contact-sub">Looking for QA / SDET roles in Banking, FinTech, or Enterprise domains. Let's talk.</p>
+        <div class="contact-links">
+          <a href="mailto:chennarajendra8@gmail.com" class="contact-link">
+            <div class="contact-link-icon">✉</div>
+            chennarajendra8@gmail.com
+          </a>
+          <a href="tel:+917729890104" class="contact-link">
+            <div class="contact-link-icon">📞</div>
+            +91 77298 90104
+          </a>
+          <a href="https://linkedin.com/in/rajendrachenna" target="_blank" class="contact-link">
+            <div class="contact-link-icon">in</div>
+            linkedin.com/in/rajendrachenna
+          </a>
+          <a href="#" class="contact-link">
+            <div class="contact-link-icon">📍</div>
+            Bengaluru, Karnataka, India
+          </a>
+        </div>
+      </div>
+      <div class="contact-form-side reveal">
+        <div class="form-group">
+          <label class="form-label">Your Name</label>
+          <input type="text" class="form-input" placeholder="Recruiter Name" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Company</label>
+          <input type="text" class="form-input" placeholder="Company / Agency" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-textarea" placeholder="Hi Rajendra, we have an exciting opportunity for you..."></textarea>
+        </div>
+        <button class="form-submit" onclick="alert('Thanks! Please reach out directly at chennarajendra8@gmail.com')">Send Message →</button>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- FOOTER -->
+<footer>
+  <div class="footer-copy">© 2025 <span>Rajendra Chenna</span> · QA Engineer</div>
+  <div style="font-size:0.65rem;letter-spacing:0.08em;">ISTQB CTFL 4.0 · Bengaluru, India</div>
+</footer>
+ 
+<script>
+  // CURSOR
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx+'px'; cursor.style.top = my+'px'; });
+  (function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) *.12;
+    ring.style.left = rx+'px'; ring.style.top = ry+'px';
+    requestAnimationFrame(animRing);
+  })();
+  document.querySelectorAll('a,button').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.width='6px'; cursor.style.height='6px'; ring.style.width='52px'; ring.style.height='52px'; });
+    el.addEventListener('mouseleave', () => { cursor.style.width='14px'; cursor.style.height='14px'; ring.style.width='38px'; ring.style.height='38px'; });
+  });
+ 
+  // SCROLL REVEAL
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => observer.observe(r));
+ 
+  // BAR FILLS
+  const barObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.bar-fill').forEach(bar => {
+          bar.style.width = bar.dataset.width + '%';
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.skill-group').forEach(g => barObserver.observe(g));
+</script>
+</body>
+</html>
